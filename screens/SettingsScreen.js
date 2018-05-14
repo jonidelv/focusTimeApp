@@ -1,14 +1,6 @@
-import React from 'react';
-import {
-  SectionList,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  AsyncStorage,
-  Button
-} from 'react-native';
-import { Constants } from 'expo';
+import React from 'react'
+import { SectionList, Image, StyleSheet, Text, View, AsyncStorage, Button } from 'react-native'
+import { Constants } from 'expo'
 
 // I almost copied and pasted this code from Expo's example.
 // I don't like it. But it was the fastest way to do this.
@@ -17,14 +9,14 @@ export default class SettingsScreen extends React.Component {
   static navigationOptions = {
     title: 'Settings',
     headerLeft: null,
-  };
+  }
 
   render() {
-    const { manifest } = Constants;
+    const { manifest } = Constants
     const sections = [
       { data: [{ value: manifest.sdkVersion }], title: 'sdkVersion' },
       { data: [{ value: manifest.version }], title: 'version' },
-    ];
+    ]
 
     return (
       <SectionList
@@ -37,26 +29,24 @@ export default class SettingsScreen extends React.Component {
         ListFooterComponent={() => <ListFooter navigation={this.props.navigation} />}
         sections={sections}
       />
-    );
+    )
   }
 
   _renderSectionHeader = ({ section }) => {
-    return <SectionHeader title={section.title} />;
-  };
+    return <SectionHeader title={section.title} />
+  }
 
   _renderItem = ({ item }) => {
     return (
       <SectionContent>
-        <Text style={styles.sectionContentText}>
-          {item.value}
-        </Text>
+        <Text style={styles.sectionContentText}>{item.value}</Text>
       </SectionContent>
-    );
-  };
+    )
+  }
 }
 
 const ListHeader = () => {
-  const { manifest } = Constants;
+  const { manifest } = Constants
 
   return (
     <View style={styles.titleContainer}>
@@ -69,58 +59,44 @@ const ListHeader = () => {
           {manifest.name}
         </Text>
 
-        <Text style={styles.descriptionText}>
-          {manifest.description}
-        </Text>
+        <Text style={styles.descriptionText}>{manifest.description}</Text>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const SectionHeader = ({ title }) => {
   return (
     <View style={styles.sectionHeaderContainer}>
-      <Text style={styles.sectionHeaderText}>
-        {title}
-      </Text>
+      <Text style={styles.sectionHeaderText}>{title}</Text>
     </View>
-  );
-};
+  )
+}
 
 const SectionContent = props => {
-  return (
-    <View style={styles.sectionContentContainer}>
-      {props.children}
-    </View>
-  );
-};
+  return <View style={styles.sectionContentContainer}>{props.children}</View>
+}
 
 const AppIconPreview = ({ iconUrl }) => {
-  return (
-    <Image
-      source={{ uri: iconUrl }}
-      style={{ width: 64, height: 64 }}
-      resizeMode="cover"
-    />
-  );
-};
+  return <Image source={{ uri: iconUrl }} style={{ width: 64, height: 64 }} resizeMode="cover" />
+}
 
 const ListFooter = ({ navigation }) => {
   const logOut = async () => {
     try {
-      await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userToken')
     } catch (error) {
-      // Error removing data
+      throw new Error(error)
     } finally {
-      navigation.navigate('Auth');
+      navigation.navigate('Auth')
     }
   }
 
   return (
     <View style={styles.footerContainer}>
-      <Button onPress={logOut} title='Log Out' />
+      <Button onPress={logOut} title="Log Out" />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -175,4 +151,4 @@ const styles = StyleSheet.create({
   footerContainer: {
     marginTop: 20,
   },
-});
+})
