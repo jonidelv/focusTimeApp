@@ -9,6 +9,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "facebookScheme": "fb590588907994139",
+    "facebookAppId": "590588907994139",
+    "facebookDisplayName": "Focus Time App",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
