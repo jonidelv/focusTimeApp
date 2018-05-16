@@ -1,6 +1,7 @@
 import React from 'react'
 import { SectionList, Image, StyleSheet, Text, View, AsyncStorage, Button } from 'react-native'
 import { Constants } from 'expo'
+import Logout from '../utils/Logout'
 
 // I almost copied and pasted this code from Expo's example.
 // I don't like it. But it was the fastest way to do this.
@@ -82,14 +83,8 @@ const AppIconPreview = ({ iconUrl }) => {
 }
 
 const ListFooter = ({ navigation }) => {
-  const logOut = async () => {
-    try {
-      await AsyncStorage.removeItem('userToken')
-    } catch (error) {
-      throw new Error(error)
-    } finally {
-      navigation.navigate('Auth')
-    }
+  const logOut = () => {
+    Logout()
   }
 
   return (

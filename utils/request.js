@@ -1,5 +1,4 @@
-import NavigationService from '../utils/NavigationService'
-import { AsyncStorage } from 'react-native'
+import Logout from './Logout'
 
 function parseJSON(response) {
   if (response.status === 204 || response.status === 205) {
@@ -14,13 +13,7 @@ async function checkStatus(response) {
   }
 
   if (response.status === 401) {
-    try {
-      await AsyncStorage.removeItem('userToken')
-    } catch (error) {
-      throw new Error(error)
-    } finally {
-      NavigationService.navigate('Auth')
-    }
+    Logout()
   }
 
   const error = new Error(response.statusText)
