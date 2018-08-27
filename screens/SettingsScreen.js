@@ -1,16 +1,32 @@
 import React from 'react'
-import { SectionList, Image, StyleSheet, Text, View, AsyncStorage, Button } from 'react-native'
+import {
+  SectionList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  AsyncStorage,
+  Button,
+  TouchableOpacity,
+  Platform,
+} from 'react-native'
 import { Constants } from 'expo'
 import Logout from '../utils/Logout'
+import TabBarIcon from '../components/TabBarIcon'
 
 // I almost copied and pasted this code from Expo's example.
 // I don't like it. But it was the fastest way to do this.
 
 export default class SettingsScreen extends React.Component {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation }) => ({
     title: 'Settings',
-    headerLeft: null,
-  }
+    headerLeft:
+      Platform.OS === 'ios' ? null : (
+        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+          <TabBarIcon name={'md-information-circle'} />
+        </TouchableOpacity>
+      ),
+  })
 
   render() {
     const { manifest } = Constants
