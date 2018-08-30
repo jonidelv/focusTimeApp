@@ -8,7 +8,6 @@ export default class LoginScreen extends React.Component {
   }
 
   login = async () => {
-    // TODO: do the actual login
     try {
       const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('590588907994139', {
         permissions: ['public_profile'],
