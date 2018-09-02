@@ -1,11 +1,10 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import {
   SectionList,
   Image,
   StyleSheet,
   Text,
   View,
-  AsyncStorage,
   Button,
   TouchableOpacity,
   Platform,
@@ -13,11 +12,17 @@ import {
 import { Constants } from 'expo'
 import Logout from '../utils/Logout'
 import TabBarIcon from '../components/TabBarIcon'
+import PropTypes from 'prop-types'
 
-// I almost copied and pasted this code from Expo's example.
-// I don't like it. But it was the fastest way to do this.
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as allActions from '../actions'
 
-export default class SettingsScreen extends React.Component {
+class SettingsScreen extends PureComponent {
+  static propTypes = {
+    makeLogout: PropTypes.func.isRequired,
+  }
+
   static navigationOptions = ({ navigation }) => ({
     title: 'Settings',
     headerLeft:
@@ -43,7 +48,7 @@ export default class SettingsScreen extends React.Component {
         stickySectionHeadersEnabled={true}
         keyExtractor={(item, index) => index}
         ListHeaderComponent={ListHeader}
-        ListFooterComponent={() => <ListFooter navigation={this.props.navigation} />}
+        ListFooterComponent={() => <ListFooter makeLogout={this.props.makeLogout} />}
         sections={sections}
       />
     )
@@ -98,17 +103,22 @@ const AppIconPreview = ({ iconUrl }) => {
   return <Image source={{ uri: iconUrl }} style={{ width: 64, height: 64 }} resizeMode="cover" />
 }
 
-const ListFooter = ({ navigation }) => {
-  const logOut = () => {
-    Logout()
-  }
-
+const ListFooter = ({ makeLogout }) => {
   return (
     <View style={styles.footerContainer}>
-      <Button onPress={logOut} title="Log Out" />
+      <Button onPress={makeLogout} title="Logout" />
     </View>
   )
 }
+
+mapDispatchToProps = dispatch => {
+  const { makeLogout } = bindActionCreators(allActions, dispatch)
+  return {
+    makeLogout,
+  }
+}
+
+export default connect(null, mapDispatchToProps)(SettingsScreen)
 
 const styles = StyleSheet.create({
   container: {

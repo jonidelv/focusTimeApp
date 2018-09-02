@@ -1,4 +1,4 @@
-const tintColor = '#2f95dc';
+const tintColor = '#2f95dc'
 
 export default {
   tintColor,
@@ -11,4 +11,8 @@ export default {
   warningText: '#666804',
   noticeBackground: tintColor,
   noticeText: '#fff',
-};
+  white: '#fff',
+  blue: '#4b75fb',
+  lightGrey: 'lightgrey',
+  black: '#000',
+}
