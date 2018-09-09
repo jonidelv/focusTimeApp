@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react'
-import { SectionList, Image, StyleSheet, Text, View, Button } from 'react-native'
-import { Constants } from 'expo'
+import { SectionList, Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { Constants, WebBrowser } from 'expo'
 import HeaderLeft from '../components/HeaderLeft'
 import HeaderRight from '../components/HeaderRight'
 import PropTypes from 'prop-types'
+import Colors from '../constants/Colors'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -29,8 +30,8 @@ class InfoScreen extends PureComponent {
   render() {
     const { manifest } = Constants
     const sections = [
-      { data: [{ value: manifest.sdkVersion }], title: 'sdkVersion' },
-      { data: [{ value: manifest.version }], title: 'version' },
+      { data: [{ value: manifest.version }], title: 'Version' },
+      { data: [{ value: 'jonidelv' }], title: 'Author' },
     ]
 
     return (
@@ -54,9 +55,19 @@ class InfoScreen extends PureComponent {
   _renderItem = ({ item }) => {
     return (
       <SectionContent>
-        <Text style={styles.sectionContentText}>{item.value}</Text>
+        {item.value === 'jonidelv' ? (
+          <Text onPress={this._handleLinkPress('https://jonidelv.me/')} style={styles.helpLinkText}>
+            {item.value}
+          </Text>
+        ) : (
+          <Text style={styles.sectionContentText}>{item.value}</Text>
+        )}
       </SectionContent>
     )
+  }
+
+  _handleLinkPress = link => () => {
+    WebBrowser.openBrowserAsync(link)
   }
 }
 
@@ -99,7 +110,11 @@ const AppIconPreview = ({ iconUrl }) => {
 const ListFooter = ({ makeLogout }) => {
   return (
     <View style={styles.footerContainer}>
-      <Button onPress={makeLogout} title="Logout" />
+      <TouchableOpacity onPress={makeLogout}>
+        <View style={styles.logoutButtonContainer}>
+          <Text style={styles.logoutButton}>Logout</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -133,9 +148,9 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
   sectionHeaderContainer: {
-    backgroundColor: '#fbfbfb',
+    backgroundColor: Colors.tabBackground,
     paddingVertical: 8,
-    paddingHorizontal: 15,
+    paddingHorizontal: 17,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#ededed',
   },
@@ -145,7 +160,7 @@ const styles = StyleSheet.create({
   sectionContentContainer: {
     paddingTop: 8,
     paddingBottom: 12,
-    paddingHorizontal: 15,
+    paddingHorizontal: 17,
   },
   sectionContentText: {
     color: '#808080',
@@ -160,10 +175,32 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     width: '100%',
     fontSize: 14,
-    marginTop: 6,
+    marginTop: 2,
     color: '#4d4d4d',
   },
   footerContainer: {
-    marginTop: 20,
+    marginTop: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  helpLinkText: {
+    color: '#2e78b7',
+  },
+  logoutButtonContainer: {
+    height: 36,
+    width: 200,
+    borderRadius: 19,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: Colors.lightBlue,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.blue,
+  },
+  logoutButton: {
+    color: Colors.white,
+    fontSize: 16,
+    lineHeight: 25,
   },
 })

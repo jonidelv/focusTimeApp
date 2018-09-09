@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "focustimeapp",
-    "description": "A very interesting project.",
+    "name": "Focus Time App",
+    "description": "React Native pomodoro ⏱ App",
     "slug": "focustimeapp",
     "privacy": "public",
     "sdkVersion": "29.0.0",

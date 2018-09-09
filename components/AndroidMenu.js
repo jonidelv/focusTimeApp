@@ -26,7 +26,7 @@ class SideMenu extends PureComponent {
           <TouchableOpacity onPress={this.navigateToScreen('Home')} style={styles.navTab}>
             <Ionicons
               name={`ios-home${this.isActive('Home') ? '' : '-outline'}`}
-              size={32}
+              size={30}
               color={this.isActive('Home') ? Colors.blue : Colors.tabIconDefault}
             />
             <Text
@@ -40,7 +40,7 @@ class SideMenu extends PureComponent {
           <TouchableOpacity onPress={this.navigateToScreen('Trophy')} style={styles.navTab}>
             <Ionicons
               name={`ios-trophy${this.isActive('Trophy') ? '' : '-outline'}`}
-              size={32}
+              size={30}
               color={this.isActive('Trophy') ? Colors.blue : Colors.tabIconDefault}
             />
             <Text
@@ -54,7 +54,7 @@ class SideMenu extends PureComponent {
           <TouchableOpacity onPress={this.navigateToScreen('Info')} style={styles.navTab}>
             <Ionicons
               name={`ios-information-circle${this.isActive('Info') ? '' : '-outline'}`}
-              size={32}
+              size={30}
               color={this.isActive('Info') ? Colors.blue : Colors.tabIconDefault}
             />
             <Text
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   navItemText: {
     marginLeft: 15,
-    fontSize: 19,
+    fontSize: 17,
     fontWeight: '400',
   },
 })
