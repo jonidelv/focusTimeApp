@@ -1,14 +1,17 @@
-import {
-  createStackNavigator
-} from 'react-navigation';
-import MainTabNavigator from './MainTabNavigator';
+import { createStackNavigator } from 'react-navigation'
+import MainNavigator from './MainNavigator'
 
-export default AppStack = createStackNavigator({
-      Main: MainTabNavigator
-    }, {
-  navigationOptions: () => ({
-    headerTitleStyle: {
-      fontWeight: 'normal'
-    }
-  })
-})
+export default (AppStack = createStackNavigator(
+  {
+    Main: MainNavigator,
+  },
+  {
+    headerMode: 'none',
+    navigationOptions: () => ({
+      headerTitleStyle: {
+        fontWeight: 'normal',
+        color: 'red',
+      },
+    }),
+  }
+))

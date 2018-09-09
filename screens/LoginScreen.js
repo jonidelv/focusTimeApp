@@ -12,10 +12,15 @@ import * as allActions from '../actions'
 class LoginScreen extends PureComponent {
   static propTypes = {
     makeLogin: PropTypes.func.isRequired,
+    changeNavigation: PropTypes.func.isRequired,
   }
 
   static navigationOptions = {
     header: null,
+  }
+
+  componentDidMount() {
+    this.props.changeNavigation('Login')
   }
 
   render() {
@@ -45,9 +50,10 @@ class LoginScreen extends PureComponent {
 }
 
 mapDispatchToProps = dispatch => {
-  const { makeLogin } = bindActionCreators(allActions, dispatch)
+  const { makeLogin, changeNavigation } = bindActionCreators(allActions, dispatch)
   return {
     makeLogin,
+    changeNavigation,
   }
 }
 

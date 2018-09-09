@@ -1,19 +1,29 @@
 import React from 'react'
 import { Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { WebBrowser } from 'expo'
-import TabBarIcon from '../components/TabBarIcon'
-import { MonoText } from '../components/StyledText'
+import HeaderLeft from '../components/HeaderLeft'
+import HeaderRight from '../components/HeaderRight'
+import PropTypes from 'prop-types'
 
-export default class HomeScreen extends React.Component {
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as allActions from '../actions'
+
+class HomeScreen extends React.Component {
+  static propTypes = {
+    changeNavigation: PropTypes.func.isRequired,
+  }
+
   static navigationOptions = ({ navigation }) => ({
     title: 'Home',
-    headerLeft:
-      Platform.OS === 'ios' ? null : (
-        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-          <TabBarIcon name={'md-information-circle'} />
-        </TouchableOpacity>
-      ),
+    headerTitleStyle: { textAlign: 'center', fontWeight: '400', flex: 1 },
+    headerLeft: <HeaderLeft onPress={navigation.toggleDrawer} />,
+    headerRight: <HeaderRight onPress={() => console.log('Header Right Pressed')} />,
   })
+
+  componentDidMount() {
+    this.props.changeNavigation('Home')
+  }
 
   render() {
     return (
@@ -35,9 +45,7 @@ export default class HomeScreen extends React.Component {
 
             <Text style={styles.getStartedText}>Get started by opening</Text>
 
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
-            </View>
+            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]} />
 
             <Text style={styles.getStartedText}>
               Change this text and your app will automatically reload.
@@ -54,9 +62,7 @@ export default class HomeScreen extends React.Component {
         <View style={styles.tabBarInfoContainer}>
           <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
 
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
-          </View>
+          <View style={[styles.codeHighlightContainer, styles.navigationFilename]} />
         </View>
       </View>
     )
@@ -95,6 +101,15 @@ export default class HomeScreen extends React.Component {
     )
   }
 }
+
+mapDispatchToProps = dispatch => {
+  const { changeNavigation } = bindActionCreators(allActions, dispatch)
+  return {
+    changeNavigation,
+  }
+}
+
+export default connect(null, mapDispatchToProps)(HomeScreen)
 
 const styles = StyleSheet.create({
   container: {

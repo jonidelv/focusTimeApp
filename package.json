@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
-    "expo": "^28.0.0",
+    "expo": "^29.0.0",
     "react": "16.3.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-28.0.0.tar.gz",
-    "react-navigation": "2.12.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-29.0.0.tar.gz",
+    "react-navigation": "^2.9.3",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "redux-actions": "^2.6.1",
@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "husky": "^0.14.3",
-    "jest-expo": "^27.0.0",
+    "jest-expo": "^29.0.0",
     "prettier": "1.12.1",
     "pretty-quick": "^1.4.1",
     "remote-redux-devtools": "^0.5.13"

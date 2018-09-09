@@ -1,4 +1,5 @@
 export default {
   LOGIN: 'LOGIN',
   LOGOUT: 'LOGOUT',
+  CHANGE_NAVIGATION: 'CHANGE_NAVIGATION',
 }

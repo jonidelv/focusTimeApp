@@ -1,16 +1,25 @@
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import Colors from '../constants/Colors';
+import React, { PureComponent } from 'react'
+import { Ionicons } from '@expo/vector-icons'
+import Colors from '../constants/Colors'
+import PropTypes from 'prop-types'
 
-export default class TabBarIcon extends React.Component {
+class TabBarIcon extends PureComponent {
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    size: PropTypes.number,
+    focused: PropTypes.bool,
+  }
+
   render() {
     return (
       <Ionicons
         name={this.props.name}
-        size={26}
+        size={this.props.size ? this.props.size : 26}
         style={{ marginBottom: -3 }}
-        color={this.props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+        color={this.props.focused ? Colors.blue : Colors.tabIconDefault}
       />
-    );
+    )
   }
 }
+
+export default TabBarIcon

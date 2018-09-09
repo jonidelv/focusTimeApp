@@ -1,37 +1,30 @@
 import React, { PureComponent } from 'react'
-import {
-  SectionList,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableOpacity,
-  Platform,
-} from 'react-native'
+import { SectionList, Image, StyleSheet, Text, View, Button } from 'react-native'
 import { Constants } from 'expo'
-import Logout from '../utils/Logout'
-import TabBarIcon from '../components/TabBarIcon'
+import HeaderLeft from '../components/HeaderLeft'
+import HeaderRight from '../components/HeaderRight'
 import PropTypes from 'prop-types'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as allActions from '../actions'
 
-class SettingsScreen extends PureComponent {
+class InfoScreen extends PureComponent {
   static propTypes = {
     makeLogout: PropTypes.func.isRequired,
+    changeNavigation: PropTypes.func.isRequired,
   }
 
   static navigationOptions = ({ navigation }) => ({
-    title: 'Settings',
-    headerLeft:
-      Platform.OS === 'ios' ? null : (
-        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-          <TabBarIcon name={'md-information-circle'} />
-        </TouchableOpacity>
-      ),
+    title: 'Info',
+    headerTitleStyle: { textAlign: 'center', fontWeight: '400', flex: 1 },
+    headerLeft: <HeaderLeft onPress={navigation.toggleDrawer} />,
+    headerRight: <HeaderRight onPress={() => console.log('Header Right Pressed')} />,
   })
+
+  componentDidMount() {
+    this.props.changeNavigation('Info')
+  }
 
   render() {
     const { manifest } = Constants
@@ -112,13 +105,14 @@ const ListFooter = ({ makeLogout }) => {
 }
 
 mapDispatchToProps = dispatch => {
-  const { makeLogout } = bindActionCreators(allActions, dispatch)
+  const { makeLogout, changeNavigation } = bindActionCreators(allActions, dispatch)
   return {
     makeLogout,
+    changeNavigation,
   }
 }
 
-export default connect(null, mapDispatchToProps)(SettingsScreen)
+export default connect(null, mapDispatchToProps)(InfoScreen)
 
 const styles = StyleSheet.create({
   container: {
