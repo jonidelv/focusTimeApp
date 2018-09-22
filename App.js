@@ -5,10 +5,20 @@ import { Ionicons } from '@expo/vector-icons'
 import RootNavigation from './navigation/RootNavigation'
 import { Provider } from 'react-redux'
 import store from './store'
+import { firebaseAuth } from './config'
+import Logout from './utils/Logout.js'
 
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false,
+  }
+
+  componentDidMount() {
+    firebaseAuth.onAuthStateChanged(user => {
+      if (!user) {
+        Logout()
+      }
+    })
   }
 
   render() {

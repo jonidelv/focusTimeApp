@@ -20,8 +20,8 @@ class AuthLoadingScreen extends React.Component {
     const userToken = await AsyncStorage.getItem('userToken')
     if (userToken) {
       const data = JSON.parse(userToken)
-      const { user, token } = data
-      this.props.login({ user, token })
+      const { token, user, uid } = data
+      this.props.login({ token, user, uid })
       this.props.navigation.navigate('App')
     } else {
       this.props.navigation.navigate('Auth')

@@ -4,6 +4,7 @@ const initialState = {
   user: {},
   isLogged: false,
   token: '',
+  uid: '',
 }
 
 export default function user(state = initialState, action) {
@@ -14,6 +15,7 @@ export default function user(state = initialState, action) {
         user: action.payload.user,
         isLogged: true,
         token: action.payload.token,
+        uid: action.payload.uid,
       }
 
     case ActionTypes.LOGOUT:
@@ -22,6 +24,7 @@ export default function user(state = initialState, action) {
         user: {},
         isLogged: false,
         token: '',
+        uid: '',
       }
 
     default:

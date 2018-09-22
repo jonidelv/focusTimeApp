@@ -17,4 +17,8 @@ export default {
   black: '#000',
   tabBackground: '#f9f9f9',
   lightBlue: '#09b1fa',
+  secondary: '#929292',
+  border: '#E4E4E4',
+  primary: '#4E595D',
+  headerPrimary: '#F7F9F9',
 }

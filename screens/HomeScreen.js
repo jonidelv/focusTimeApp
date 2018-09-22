@@ -17,8 +17,8 @@ class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: 'Home',
     headerTitleStyle: { textAlign: 'center', fontWeight: '400', flex: 1 },
-    headerLeft: <HeaderLeft onPress={navigation.toggleDrawer} />,
-    headerRight: <HeaderRight onPress={() => console.log('Header Right Pressed')} />,
+    headerLeft: Platform.OS === 'ios' ? null : <HeaderLeft onPress={navigation.toggleDrawer} />,
+    headerRight: <HeaderRight onPress={() => navigation.navigate('Settings')} />,
   })
 
   componentDidMount() {

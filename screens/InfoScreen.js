@@ -1,5 +1,13 @@
 import React, { PureComponent } from 'react'
-import { SectionList, Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import {
+  SectionList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Platform,
+} from 'react-native'
 import { Constants, WebBrowser } from 'expo'
 import HeaderLeft from '../components/HeaderLeft'
 import HeaderRight from '../components/HeaderRight'
@@ -19,8 +27,8 @@ class InfoScreen extends PureComponent {
   static navigationOptions = ({ navigation }) => ({
     title: 'Info',
     headerTitleStyle: { textAlign: 'center', fontWeight: '400', flex: 1 },
-    headerLeft: <HeaderLeft onPress={navigation.toggleDrawer} />,
-    headerRight: <HeaderRight onPress={() => console.log('Header Right Pressed')} />,
+    headerLeft: Platform.OS === 'ios' ? null : <HeaderLeft onPress={navigation.toggleDrawer} />,
+    headerRight: <HeaderRight onPress={() => navigation.navigate('Settings')} />,
   })
 
   componentDidMount() {
@@ -187,8 +195,8 @@ const styles = StyleSheet.create({
     color: '#2e78b7',
   },
   logoutButtonContainer: {
-    height: 36,
-    width: 200,
+    height: 45,
+    width: 220,
     borderRadius: 19,
     marginBottom: 15,
     borderWidth: 1,
@@ -200,7 +208,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     color: Colors.white,
-    fontSize: 16,
-    lineHeight: 25,
+    fontSize: 18,
+    lineHeight: 40,
   },
 })

@@ -2,7 +2,7 @@ import React from 'react'
 import { ExpoLinksView } from '@expo/samples'
 import HeaderLeft from '../components/HeaderLeft'
 import HeaderRight from '../components/HeaderRight'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Platform } from 'react-native'
 import PropTypes from 'prop-types'
 
 import { bindActionCreators } from 'redux'
@@ -17,8 +17,8 @@ class TrophyScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: 'Trophies',
     headerTitleStyle: { textAlign: 'center', fontWeight: '400', flex: 1 },
-    headerLeft: <HeaderLeft onPress={navigation.toggleDrawer} />,
-    headerRight: <HeaderRight onPress={() => console.log('Header Right Pressed')} />,
+    headerLeft: Platform.OS === 'ios' ? null : <HeaderLeft onPress={navigation.toggleDrawer} />,
+    headerRight: <HeaderRight onPress={() => navigation.navigate('Settings')} />,
   })
 
   componentDidMount() {
