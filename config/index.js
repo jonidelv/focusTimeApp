@@ -1,13 +1,7 @@
 import firebase from 'firebase'
+import { Firebase } from '../constants/Auth'
 
-firebase.initializeApp({
-  apiKey: '*****',
-  authDomain: '*****',
-  databaseURL: '*****',
-  projectId: '*****',
-  storageBucket: '*****',
-  messagingSenderId: '*****',
-})
+firebase.initializeApp(Firebase)
 
 const ref = firebase.database().ref()
 const firebaseAuth = firebase.auth()

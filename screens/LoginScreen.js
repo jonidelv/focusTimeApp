@@ -16,7 +16,9 @@ class LoginScreen extends PureComponent {
 
   static propTypes = {
     makeLogin: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired,
     changeNavigation: PropTypes.func.isRequired,
+    isLogged: PropTypes.bool.isRequired,
   }
 
   static navigationOptions = {
@@ -25,6 +27,9 @@ class LoginScreen extends PureComponent {
 
   componentDidMount() {
     this.props.changeNavigation('Login')
+    if (this.props.isLogged) {
+      this.props.logout()
+    }
   }
 
   makeLogin = async () => {
@@ -63,15 +68,22 @@ class LoginScreen extends PureComponent {
   }
 }
 
-mapDispatchToProps = dispatch => {
-  const { makeLogin, changeNavigation } = bindActionCreators(allActions, dispatch)
+function mapStateToProps(state) {
   return {
-    makeLogin,
-    changeNavigation,
+    isLogged: state.user.isLogged,
   }
 }
 
-export default connect(null, mapDispatchToProps)(LoginScreen)
+mapDispatchToProps = dispatch => {
+  const { makeLogin, changeNavigation, logout } = bindActionCreators(allActions, dispatch)
+  return {
+    makeLogin,
+    changeNavigation,
+    logout,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)
 
 const styles = StyleSheet.create({
   container: {
