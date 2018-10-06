@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import Colors from '../constants/Colors'
 import HeaderLeft from '../components/HeaderLeft'
 import Slider from 'react-native-slider'
+import Toast from 'react-native-root-toast'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -11,12 +12,16 @@ import * as allActions from '../actions'
 
 class SettingsScreen extends PureComponent {
   state = {
-    timerDuration: 20,
-    restDuration: 5,
+    timerDuration: this.props.timerDuration,
+    restDuration: this.props.restDuration,
   }
 
   static propTypes = {
     changeNavigation: PropTypes.func.isRequired,
+    timerDuration: PropTypes.number.isRequired,
+    restDuration: PropTypes.number.isRequired,
+    changeTimerDuration: PropTypes.func.isRequired,
+    changeRestDuration: PropTypes.func.isRequired,
   }
 
   static navigationOptions = ({ navigation }) => ({
@@ -45,11 +50,11 @@ class SettingsScreen extends PureComponent {
   }
 
   handleTimerComplete = () => {
-    console.log('Finished Sliding Timer')
+    this.props.changeTimerDuration(this.state.timerDuration)
   }
 
   handleRestComplete = () => {
-    console.log('Finished Sliding Rest Timer')
+    this.props.changeRestDuration(this.state.restDuration)
   }
 
   render() {
@@ -93,15 +98,24 @@ class SettingsScreen extends PureComponent {
   }
 }
 
-mapDispatchToProps = dispatch => {
-  const { changeNavigation } = bindActionCreators(allActions, dispatch)
-
+function mapStateToProps({ settings }) {
   return {
-    changeNavigation,
+    timerDuration: settings.timerDuration,
+    restDuration: settings.restDuration,
   }
 }
 
-export default connect(null, mapDispatchToProps)(SettingsScreen)
+mapDispatchToProps = dispatch => {
+  const actions = bindActionCreators(allActions, dispatch)
+
+  return {
+    changeNavigation: actions.changeNavigation,
+    changeTimerDuration: actions.changeTimerDuration,
+    changeRestDuration: actions.changeRestDuration,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen)
 
 const styles = StyleSheet.create({
   container: {

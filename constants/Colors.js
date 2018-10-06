@@ -21,4 +21,5 @@ export default {
   border: '#E4E4E4',
   primary: '#4E595D',
   headerPrimary: '#F7F9F9',
+  red: '#FF6A60',
 }

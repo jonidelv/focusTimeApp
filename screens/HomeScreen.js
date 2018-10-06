@@ -1,17 +1,53 @@
 import React from 'react'
-import { Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { WebBrowser } from 'expo'
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import HeaderLeft from '../components/HeaderLeft'
 import HeaderRight from '../components/HeaderRight'
 import PropTypes from 'prop-types'
+import Colors from '../constants/Colors'
+import ProgressBar from '../components/ProgressBar'
+import PressableIcon from '../components/PressableIcon'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as allActions from '../actions'
 
+function secondsToHMS(secs) {
+  const hours = Math.floor(secs / 3600)
+  const mins = Math.floor((secs % 3600) / 60)
+  const seconds = Math.floor((secs % 3600) % 60)
+  return (
+    (hours > 0 ? hours + ':' + (mins < 10 ? '0' : '') : '') +
+    mins +
+    ':' +
+    (seconds < 10 ? '0' : '') +
+    seconds
+  )
+}
+
+/*
+  +1 pt for every minute
+  -5 pts on restart
+  -5 pts for pausing
+  +5 pts for finishing
+*/
+
 class HomeScreen extends React.Component {
+  state = {
+    timer: this.props.timerDuration,
+    rest: this.props.restDuration,
+    activeCountdown: 'timer',
+    countdownRunning: false,
+  }
+
+  static defaultProps = {
+    score: 0,
+  }
+
   static propTypes = {
     changeNavigation: PropTypes.func.isRequired,
+    timerDuration: PropTypes.number.isRequired,
+    restDuration: PropTypes.number.isRequired,
+    score: PropTypes.number.isRequired,
   }
 
   static navigationOptions = ({ navigation }) => ({
@@ -25,177 +61,163 @@ class HomeScreen extends React.Component {
     this.props.changeNavigation('Home')
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.timerDuration !== nextProps.timerDuration) {
+      this.setState({
+        timer: nextProps.timerDuration,
+      })
+    }
+    if (this.props.restDuration !== nextProps.restDuration) {
+      this.setState({
+        rest: nextProps.restDuration,
+      })
+    }
+  }
+
+  handleToggleCountdown = () => {
+    if (this.state.countdownRunning) {
+      this.setState({ countdownRunning: false })
+      this.props.decrementAndHandleScore(5)
+      return window.clearInterval(this.interval)
+    }
+
+    this.setState({
+      countdownRunning: true,
+    })
+
+    this.interval = setInterval(() => {
+      const activeCountdown = this.state.activeCountdown
+      const nextSecond = this.state[activeCountdown] - 1
+
+      if (nextSecond === 0) {
+        this.setState({
+          [activeCountdown]:
+            activeCountdown === 'timer' ? this.props.timerDuration : this.props.restDuration,
+          activeCountdown: activeCountdown === 'timer' ? 'rest' : 'timer',
+        })
+        this.props.incrementAndHandleScore(5)
+      } else {
+        this.setState({
+          [activeCountdown]: nextSecond,
+        })
+      }
+
+      if (nextSecond % 60 === 0) {
+        this.props.incrementAndHandleScore(1)
+      }
+    }, 1000)
+  }
+
+  handleReset = () => {
+    window.clearInterval(this.interval)
+    this.setState({
+      timer: this.props.timerDuration,
+      countdownRunning: false,
+    })
+    this.props.decrementAndHandleScore(5)
+  }
+
+  handleSkipRest = () => {
+    this.setState({
+      rest: this.props.restDuration,
+      activeCountdown: 'timer',
+    })
+  }
+
+  getProgress = () => {
+    return this.state.activeCountdown === 'timer'
+      ? 1 - this.state.timer / this.props.timerDuration
+      : 1 - this.state.rest / this.props.restDuration
+  }
+
   render() {
+    const progressBarStyles = {
+      marginRight: 20,
+      marginLeft: 20,
+      backgroundColor: this.state.activeCountdown === 'timer' ? Colors.blue : Colors.red,
+    }
     return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/robot-dev.png')
-                  : require('../assets/images/robot-prod.png')
-              }
-              style={styles.welcomeImage}
-            />
-          </View>
-
-          <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
-
-            <Text style={styles.getStartedText}>Get started by opening</Text>
-
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]} />
-
-            <Text style={styles.getStartedText}>
-              Change this text and your app will automatically reload.
-            </Text>
-          </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: this.state.activeCountdown === 'timer' ? Colors.blue : Colors.red },
+        ]}>
+        <Text style={styles.score}>Score: {this.props.score}</Text>
+        <Text style={styles.countdown}>{secondsToHMS(this.state[this.state.activeCountdown])}</Text>
+        <ProgressBar progress={this.getProgress()} style={progressBarStyles} />
+        <View style={styles.footer}>
+          {this.state.activeCountdown === 'timer' ? (
+            <View style={styles.timerButtons}>
+              {this.state.countdownRunning ? (
+                <PressableIcon name="ios-pause-outline" onPress={this.handleToggleCountdown} />
+              ) : (
+                <PressableIcon name="ios-play-outline" onPress={this.handleToggleCountdown} />
+              )}
+              <PressableIcon name="ios-refresh-outline" onPress={this.handleReset} />
+            </View>
+          ) : (
+            <TouchableOpacity onPress={this.handleSkipRest}>
+              <Text style={styles.skipText}>Skip Rest</Text>
             </TouchableOpacity>
-          </View>
-        </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
-
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]} />
+          )}
         </View>
       </View>
     )
   }
+}
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      )
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      )
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      )
-    }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode')
-  }
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    )
+function mapStateToProps({ settings, scores, user }) {
+  return {
+    timerDuration: settings.timerDuration * 60,
+    restDuration: settings.restDuration * 60,
+    score: scores.usersScores[user.uid],
   }
 }
 
 mapDispatchToProps = dispatch => {
-  const { changeNavigation } = bindActionCreators(allActions, dispatch)
+  const { changeNavigation, incrementAndHandleScore, decrementAndHandleScore } = bindActionCreators(
+    allActions,
+    dispatch
+  )
   return {
     changeNavigation,
+    incrementAndHandleScore,
+    decrementAndHandleScore,
   }
 }
 
-export default connect(null, mapDispatchToProps)(HomeScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
+  footer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 65,
+  },
+  score: {
+    margin: 10,
+    alignSelf: 'stretch',
+    color: Colors.white,
+    fontSize: 16,
+    textAlign: 'right',
+  },
+  countdown: {
+    color: Colors.white,
+    fontSize: 100,
     textAlign: 'center',
+    margin: 30,
+    fontWeight: '100',
   },
-  contentContainer: {
-    paddingTop: 30,
+  timerButtons: {
+    flexDirection: 'row',
   },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
+  skipText: {
+    color: Colors.white,
+    fontSize: 20,
     textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
   },
 })

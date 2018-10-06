@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Text, Image, ActivityIndicator } from 'react-native'
 import Colors from '../constants/Colors'
 import Layout from '../constants/Layout'
 import { Ionicons } from '@expo/vector-icons'
@@ -44,6 +44,7 @@ class LoginScreen extends PureComponent {
         <View style={styles.sloganContainer}>
           <Image style={styles.image} source={require('../assets/images/logo.png')} />
           <Text style={styles.slogan}>{this.state.loading ? 'Loading...' : 'Focus Time'}</Text>
+          {this.state.loading && <ActivityIndicator size="small" color={Colors.blue} />}
         </View>
         {!this.state.loading && (
           <View style={styles.loginContainer}>
