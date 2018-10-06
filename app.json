@@ -22,7 +22,11 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jonidelv.focustimeapp"
+    },
+    "android": {
+      "package": "com.jonidelv.focustimeapp"
     }
   }
 }
