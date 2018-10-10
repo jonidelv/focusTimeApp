@@ -3,4 +3,4 @@
 React Native pomodoro ⏱ App
 https://expo.io/@delvallejonatan/focustimeapp
 
-![qrcode](/assets/images/qrcode.png?raw=true 'qrcode')
+[live version](https://appetize.io/embed/5zmrmmgyj75qhzubnbb8jf331m?device=nexus5&scale=75&orientation=portrait&osVersion=7.1)

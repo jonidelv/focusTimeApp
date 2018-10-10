@@ -33,9 +33,15 @@ class LoginScreen extends PureComponent {
   }
 
   makeLogin = async () => {
-    this.setState({ loading: true })
-    await this.props.makeLogin()
-    this.setState({ loading: false })
+    try {
+      this.setState({ loading: true })
+      await this.props.makeLogin()
+      this.setState({ loading: false })
+    } catch (error) {
+      console.warn('Error on Facebook Login', error)
+      toast('Error, please try again later', 0, '#d50001')
+      this.setState({ loading: false })
+    }
   }
 
   render() {
