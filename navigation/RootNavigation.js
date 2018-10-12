@@ -1,10 +1,11 @@
+import React, { PureComponent } from 'react'
 import { Notifications } from 'expo'
-import React from 'react'
 import { createSwitchNavigator } from 'react-navigation'
 import AuthLoadingScreen from '../screens/AuthLoadingScreen'
 import AuthStack from './AuthStack'
 import AppStack from './AppStack'
 import NavigationService from '../utils/NavigationService'
+import Timer from '../components/Timer'
 
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync'
 
@@ -19,7 +20,7 @@ const RootSwitchNavigator = createSwitchNavigator(
   }
 )
 
-export default class RootNavigator extends React.Component {
+export default class RootNavigator extends PureComponent {
   componentDidMount() {
     this._notificationSubscription = this._registerForPushNotifications()
   }
@@ -30,9 +31,11 @@ export default class RootNavigator extends React.Component {
 
   render() {
     return (
-      <RootSwitchNavigator
-        ref={navigatorRef => NavigationService.setTopLevelNavigator(navigatorRef)}
-      />
+      <Timer>
+        <RootSwitchNavigator
+          ref={navigatorRef => NavigationService.setTopLevelNavigator(navigatorRef)}
+        />
+      </Timer>
     )
   }
 

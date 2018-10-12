@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import HeaderLeft from '../components/HeaderLeft'
 import HeaderRight from '../components/HeaderRight'
@@ -10,6 +10,9 @@ import PressableIcon from '../components/PressableIcon'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as allActions from '../actions'
+
+import appContext from '../utils/appContext'
+const { Consumer } = appContext
 
 function secondsToHMS(secs) {
   const hours = Math.floor(secs / 3600)
@@ -24,29 +27,13 @@ function secondsToHMS(secs) {
   )
 }
 
-/*
-  +1 pt for every minute
-  -5 pts on restart
-  -5 pts for pausing
-  +5 pts for finishing
-*/
-
-class HomeScreen extends React.Component {
-  state = {
-    timer: this.props.timerDuration,
-    rest: this.props.restDuration,
-    activeCountdown: 'timer',
-    countdownRunning: false,
-  }
-
+class HomeScreen extends PureComponent {
   static defaultProps = {
     score: 0,
   }
 
   static propTypes = {
     changeNavigation: PropTypes.func.isRequired,
-    timerDuration: PropTypes.number.isRequired,
-    restDuration: PropTypes.number.isRequired,
     score: PropTypes.number.isRequired,
   }
 
@@ -61,128 +48,64 @@ class HomeScreen extends React.Component {
     this.props.changeNavigation('Home')
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.timerDuration !== nextProps.timerDuration) {
-      this.setState({
-        timer: nextProps.timerDuration,
-      })
-    }
-    if (this.props.restDuration !== nextProps.restDuration) {
-      this.setState({
-        rest: nextProps.restDuration,
-      })
-    }
-  }
-
-  handleToggleCountdown = () => {
-    if (this.state.countdownRunning) {
-      this.setState({ countdownRunning: false })
-      this.props.decrementAndHandleScore(5)
-      return window.clearInterval(this.interval)
-    }
-
-    this.setState({
-      countdownRunning: true,
-    })
-
-    this.interval = setInterval(() => {
-      const activeCountdown = this.state.activeCountdown
-      const nextSecond = this.state[activeCountdown] - 1
-
-      if (nextSecond === 0) {
-        this.setState({
-          [activeCountdown]:
-            activeCountdown === 'timer' ? this.props.timerDuration : this.props.restDuration,
-          activeCountdown: activeCountdown === 'timer' ? 'rest' : 'timer',
-        })
-        this.props.incrementAndHandleScore(5)
-      } else {
-        this.setState({
-          [activeCountdown]: nextSecond,
-        })
-      }
-
-      if (nextSecond % 60 === 0) {
-        this.props.incrementAndHandleScore(1)
-      }
-    }, 1000)
-  }
-
-  handleReset = () => {
-    window.clearInterval(this.interval)
-    this.setState({
-      timer: this.props.timerDuration,
-      countdownRunning: false,
-    })
-    this.props.decrementAndHandleScore(5)
-  }
-
-  handleSkipRest = () => {
-    this.setState({
-      rest: this.props.restDuration,
-      activeCountdown: 'timer',
-    })
-  }
-
-  getProgress = () => {
-    return this.state.activeCountdown === 'timer'
-      ? 1 - this.state.timer / this.props.timerDuration
-      : 1 - this.state.rest / this.props.restDuration
-  }
-
   render() {
-    const progressBarStyles = {
-      marginRight: 20,
-      marginLeft: 20,
-      backgroundColor: this.state.activeCountdown === 'timer' ? Colors.blue : Colors.red,
-    }
     return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: this.state.activeCountdown === 'timer' ? Colors.blue : Colors.red },
-        ]}>
-        <Text style={styles.score}>Score: {this.props.score}</Text>
-        <Text style={styles.countdown}>{secondsToHMS(this.state[this.state.activeCountdown])}</Text>
-        <ProgressBar progress={this.getProgress()} style={progressBarStyles} />
-        <View style={styles.footer}>
-          {this.state.activeCountdown === 'timer' ? (
-            <View style={styles.timerButtons}>
-              {this.state.countdownRunning ? (
-                <PressableIcon name="ios-pause-outline" onPress={this.handleToggleCountdown} />
+      <Consumer>
+        {({ state, actions }) => (
+          <View
+            style={[
+              styles.container,
+              { backgroundColor: state.activeCountdown === 'timer' ? Colors.blue : Colors.red },
+            ]}>
+            <Text style={styles.score}>Score: {this.props.score}</Text>
+            <Text style={styles.countdown}>{secondsToHMS(state[state.activeCountdown])}</Text>
+            <ProgressBar
+              progress={actions.getProgress()}
+              style={{
+                marginRight: 20,
+                marginLeft: 20,
+                backgroundColor: state.activeCountdown === 'timer' ? Colors.blue : Colors.red,
+              }}
+            />
+            <View style={styles.footer}>
+              {state.activeCountdown === 'timer' ? (
+                <View style={styles.timerButtons}>
+                  {state.countdownRunning ? (
+                    <PressableIcon
+                      name="ios-pause-outline"
+                      onPress={actions.handleToggleCountdown}
+                    />
+                  ) : (
+                    <PressableIcon
+                      name="ios-play-outline"
+                      onPress={actions.handleToggleCountdown}
+                    />
+                  )}
+                  <PressableIcon name="ios-refresh-outline" onPress={actions.handleReset} />
+                </View>
               ) : (
-                <PressableIcon name="ios-play-outline" onPress={this.handleToggleCountdown} />
+                <TouchableOpacity onPress={actions.handleSkipRest}>
+                  <Text style={styles.skipText}>Skip Rest</Text>
+                </TouchableOpacity>
               )}
-              <PressableIcon name="ios-refresh-outline" onPress={this.handleReset} />
             </View>
-          ) : (
-            <TouchableOpacity onPress={this.handleSkipRest}>
-              <Text style={styles.skipText}>Skip Rest</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
+          </View>
+        )}
+      </Consumer>
     )
   }
 }
 
-function mapStateToProps({ settings, scores, user }) {
+function mapStateToProps({ scores, user }) {
   return {
-    timerDuration: settings.timerDuration * 60,
-    restDuration: settings.restDuration * 60,
     score: scores.usersScores[user.uid],
   }
 }
 
 mapDispatchToProps = dispatch => {
-  const { changeNavigation, incrementAndHandleScore, decrementAndHandleScore } = bindActionCreators(
-    allActions,
-    dispatch
-  )
+  const { changeNavigation } = bindActionCreators(allActions, dispatch)
   return {
     changeNavigation,
-    incrementAndHandleScore,
-    decrementAndHandleScore,
   }
 }
 

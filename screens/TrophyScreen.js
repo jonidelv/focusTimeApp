@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import HeaderLeft from '../components/HeaderLeft'
 import HeaderRight from '../components/HeaderRight'
 import { StyleSheet, Platform, ListView, View, ActivityIndicator, Text } from 'react-native'
@@ -18,7 +18,7 @@ imageStyles = {
   overflow: 'hidden',
 }
 
-class TrophyScreen extends React.Component {
+class TrophyScreen extends PureComponent {
   ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
   state = {
     dataSource: this.ds.cloneWithRows(this.props.leaders),

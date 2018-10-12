@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import { ActivityIndicator, AsyncStorage, StyleSheet, View, Image, Text } from 'react-native'
 import PropTypes from 'prop-types'
 import Colors from '../constants/Colors'
@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as allActions from '../actions'
 
-class AuthLoadingScreen extends React.Component {
+class AuthLoadingScreen extends PureComponent {
   constructor(props) {
     super(props)
     this._bootstrapAsync()

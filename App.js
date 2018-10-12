@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Platform, StatusBar, StyleSheet, View } from 'react-native'
 import { AppLoading, Asset, Font } from 'expo'
 import { Ionicons } from '@expo/vector-icons'
@@ -8,7 +8,7 @@ import store from './store'
 import { firebaseAuth } from './config'
 import Logout from './utils/Logout.js'
 
-export default class App extends React.Component {
+class App extends Component {
   state = {
     isLoadingComplete: false,
   }
@@ -72,3 +72,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 })
+
+export default App
